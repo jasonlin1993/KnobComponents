@@ -7,3 +7,10 @@
 - 可自訂最大、最小值
 - 可自訂顏色與尺寸
 - 可設定起點位置
+  
+---
+
+### 我的思考過程
+
+#### 首先問 chatgpt 設計第一版本的 knob components
+https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
