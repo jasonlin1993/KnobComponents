@@ -16,4 +16,4 @@
 https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
 
 複製貼上後產生一個很像，但完全不對的 Knob 元件，可是我們有第 1 個版本了。
-[!image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob.gif)
+![image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob.gif)
