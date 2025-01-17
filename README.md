@@ -12,7 +12,7 @@
 
 ### 我的思考過程
 
-#### 首先問 chatgpt 設計第一版本的 knob components
+#### 首先問 chatgpt 並快速產出第 1 版本的 knob components
 https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
 
-複製貼上後產生一個很像，但完全不對的 Knob 元件，可是我們有第一個版本了。
+複製貼上後產生一個很像，但完全不對的 Knob 元件，可是我們有第 1 個版本了。
