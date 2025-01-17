@@ -19,3 +19,7 @@ https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
 ![image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob.gif)
 
 #### 1-1 哪裡需要修正?
+- 沒辦法用滑鼠拖曳元件
+- 外圍環形拉條顯示錯誤
+
+#### 1-2 如何修正?
