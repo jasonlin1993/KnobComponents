@@ -19,7 +19,10 @@ https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
 ![image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob.gif)
 
 #### 1-1 哪裡需要修正?
-- 滑鼠是移動就會開始計算，而不是要拖曳元件的方式
-- 外圍環形拉條比例顯示錯誤
+ 1. 拖曳 vs 滑鼠移動：滑鼠只要進入範圍就開始計算，而不是在「按住並拖曳」時才更新數值。
+ 2. 外圍環形拉條比例顯示錯誤：如果想讓旋轉對應到 0~100 的百分比，需要對角度和進度值做更多細部校正
 
 #### 1-2 程式碼如何修正?
+在改進版本中，重點是解決以下問題：
+1. 拖曳啟動與停止
+   - 只在 `mousedown` / touchstart 時開始偵測移動，並在 mouseup / touchend 時停止偵測。
