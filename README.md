@@ -93,6 +93,6 @@ const stopDrag = () => {
 4. 在彈窗中更新最小值 / 最大值
    - 範例中在彈窗（`showRangePopup = true`）時，分別提供兩個 `<input type="number" v-model.number="minValue" />` 與 `<input type="number" v-model.number="maxValue" />`。
    - 使用者更改這兩個輸入欄位後，就能即時改變 `minValue` 和 `maxValue`
-
+![image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob2.gif)
 
 
