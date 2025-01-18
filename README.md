@@ -31,4 +31,5 @@ https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
    - 透過「目前角度 - 上一次的角度」的差值，來更新 `progress`。
    - 如要支援可循環旋轉，就需要檢查是否有超過 180 度或小於 -180 度的情況，並手動校正角度。
 3. `stroke-dashoffset` 表示外圍環形進度
-   - 
+   - 由 `circumference - (progress / 100) * circumference` 算出。
+   - `progress` 從 0~100 時，環形進度能正確顯示在畫面上
