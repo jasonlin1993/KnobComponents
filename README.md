@@ -64,7 +64,35 @@ const stopDrag = () => {
 ---
 
 #### 2. 新增元件功能: 可自訂最大、最小值
+1. State 定義
+   ```ts
+   const minValue = ref(0);
+   const maxValue = ref(100);
+   ```
+   - `minValue` 與 `maxValue` 透過 `ref` 來定義為響應式變數，初始值分別是 0 與 100。
+   - 這兩個變數會透過彈窗（`showRangePopup`）中的 input 輸入欄位讓使用者動態修改。
 
+2. 顯示值（displayValue）的計算
+   ```ts
+   const displayValue = computed(() => {
+   // 先把 progress 當成 0~1 的比例
+   const ratio = progress.value / 100;
+   // 再映射到 minValue ~ maxValue 之間
+   return minValue.value + (maxValue.value - minValue.value) * ratio;
+   });
+   ```
+   - `progress` 是介於 0～100 的「百分比」，用來表示拖曳圓點在整個圓圈的進度。
+   
+   - `ratio` 先把 `progress` 視為一個 0～1 之間的小數值（`progress / 100`）。
+   - 接著，以 `ratio` 去插值（interpolate）到使用者自訂的 `[minValue, maxValue]` 區間：
+     顯示值 = `minValue` + ( `maxValue` − `minValue` ) × `ratio`
+   - 當拖曳進度為 0（即 `progress = 0`）時，顯示值會是 `minValue`；當拖曳進度為 100（即 `progress = 100`）時，顯示值則會是 `maxValue`
+3. 顯示值保持在 minValue 與 maxValue 之間
+   -  `progress` 在程式裡永遠被限定在 0～100 之間（像是在更新拖曳時 `if (newProgress < 0) { newProgress += 100 } ...` 的做法）。
+   -  一旦 `progress` 被限定在 [0,100]，經過上述的插值運算，`displayValue` 就自然落在 `[minValue, maxValue]` 之間。
+4. 在彈窗中更新最小值 / 最大值
+   - 範例中在彈窗（`showRangePopup = true`）時，分別提供兩個 `<input type="number" v-model.number="minValue" />` 與 `<input type="number" v-model.number="maxValue" />`。
+   - 使用者更改這兩個輸入欄位後，就能即時改變 `minValue` 和 `maxValue`
 
 
 
