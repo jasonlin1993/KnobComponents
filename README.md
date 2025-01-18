@@ -61,5 +61,10 @@ const stopDrag = () => {
 #### 現在有一個最基礎的功能版本:拉動元件必須可以變更數值
 ![image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob1.gif)
 
+---
+
+#### 2. 新增元件功能: 可自訂最大、最小值
+
+
 
 
