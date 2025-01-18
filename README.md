@@ -95,4 +95,10 @@ const stopDrag = () => {
    - 使用者更改這兩個輸入欄位後，就能即時改變 `minValue` 和 `maxValue`
 ![image](https://github.com/jasonlin1993/KnobComponents/blob/main/knob2.gif)
 
+--- 
+
+#### 3.新增元件功能: 可自訂顏色與尺寸
+
+
+
 
