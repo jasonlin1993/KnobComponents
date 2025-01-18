@@ -25,4 +25,10 @@ https://chatgpt.com/share/6789e4ca-918c-8012-a9fc-e6bdfe828b50
 #### 1-2 程式碼如何修正?
 在改進版本中，重點是解決以下問題：
 1. 拖曳啟動與停止
-   - 只在 `mousedown` / touchstart 時開始偵測移動，並在 mouseup / touchend 時停止偵測。
+   - 只在 `mousedown` / `touchstart` 時開始偵測移動，並在 `mouseup` / `touchend` 時停止偵測。
+2. 角度與進度的計算關係
+   - 使用 `Math.atan2` 計算滑鼠(或觸碰)相對於圓心的角度，並將該角度轉換成 0~360 區間。
+   - 透過「目前角度 - 上一次的角度」的差值，來更新 `progress`。
+   - 如要支援可循環旋轉，就需要檢查是否有超過 180 度或小於 -180 度的情況，並手動校正角度。
+3. `stroke-dashoffset` 表示外圍環形進度
+   - 
