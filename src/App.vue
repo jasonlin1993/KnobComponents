@@ -1,78 +1,142 @@
 <template>
-  <div class="flex h-screen items-center justify-center">
+  <div class="flex h-screen w-full items-center justify-center">
     <div
-      class="relative flex h-40 w-40 items-center justify-center"
-      @mousemove="handleMouseMove"
-      @mouseleave="resetProgress"
+      class="relative h-64 w-64 select-none"
+      @mousedown="startDrag"
+      @touchstart="startDrag"
+      ref="container"
     >
-      <!-- Circle Progress -->
-      <svg class="absolute h-full w-full -rotate-90 transform">
-        <circle cx="50%" cy="50%" r="45%" fill="none" stroke="#e5e7eb" stroke-width="10"></circle>
+      <svg class="h-full w-full" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="45" fill="none" stroke="#e2e8f0" stroke-width="8" />
         <circle
-          cx="50%"
-          cy="50%"
-          r="45%"
+          cx="50"
+          cy="50"
+          r="45"
           fill="none"
-          :stroke="progressColor"
-          stroke-width="10"
-          stroke-dasharray="282.6"
-          :stroke-dashoffset="dashOffset"
+          stroke="#3b82f6"
+          stroke-width="8"
           stroke-linecap="round"
-        ></circle>
+          :stroke-dasharray="circumference"
+          :stroke-dashoffset="dashOffset"
+          transform="rotate(-90 50 50)"
+        />
+        <!-- Draggable handle -->
+        <circle
+          :cx="handlePosition.x"
+          :cy="handlePosition.y"
+          r="6"
+          fill="#2563eb"
+          class="cursor-grab active:cursor-grabbing"
+          @mousedown.stop="startDrag"
+          @touchstart.stop="startDrag"
+        />
       </svg>
-
-      <!-- Display Progress -->
-      <div class="text-center text-gray-700">
-        <span class="text-2xl font-bold">{{ progress }}</span>
+      <div
+        class="absolute inset-0 flex items-center justify-center text-4xl font-bold text-gray-800"
+        aria-live="polite"
+      >
+        {{ Math.round(progress) }}
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, computed } from 'vue';
+import { defineComponent, ref, computed, onMounted, onUnmounted } from 'vue';
 
 export default defineComponent({
-  name: 'CircularProgress',
+  name: 'EnhancedRotatingProgress',
   setup() {
     const progress = ref(0);
+    const container = ref<HTMLElement | null>(null);
+    const isDragging = ref(false);
+    const startAngle = ref(0);
 
-    // 計算進度顏色
-    const progressColor = computed(() => {
-      if (progress.value < 50) return '#10b981'; // 綠色
-      if (progress.value < 75) return '#fbbf24'; // 黃色
-      return '#ef4444'; // 紅色
+    const radius = 45;
+    const circumference = computed(() => 2 * Math.PI * radius);
+    const dashOffset = computed(
+      () => circumference.value - (progress.value / 100) * circumference.value,
+    );
+
+    const handlePosition = computed(() => {
+      const angle = (progress.value / 100) * 2 * Math.PI - Math.PI / 2;
+      return {
+        x: 50 + 45 * Math.cos(angle),
+        y: 50 + 45 * Math.sin(angle),
+      };
     });
 
-    // 圓周的長度與進度偏移量
-    const circumference = 2 * Math.PI * 45; // 半徑 45%
-    const dashOffset = computed(() => {
-      return circumference - (progress.value / 100) * circumference;
+    const calculateAngle = (event: MouseEvent | TouchEvent) => {
+      if (!container.value) return 0;
+
+      const rect = container.value.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const clientX = 'touches' in event ? event.touches[0].clientX : event.clientX;
+      const clientY = 'touches' in event ? event.touches[0].clientY : event.clientY;
+
+      const deltaX = clientX - centerX;
+      const deltaY = clientY - centerY;
+
+      let angle = Math.atan2(deltaY, deltaX);
+      angle = angle * (180 / Math.PI);
+      if (angle < 0) angle += 360;
+
+      return angle;
+    };
+
+    const updateProgress = (event: MouseEvent | TouchEvent) => {
+      if (!isDragging.value) return;
+
+      const currentAngle = calculateAngle(event);
+      let angleDiff = currentAngle - startAngle.value;
+
+      if (angleDiff > 180) angleDiff -= 360;
+      if (angleDiff < -180) angleDiff += 360;
+
+      let newProgress = progress.value + (angleDiff / 360) * 100;
+
+      if (newProgress < 0) newProgress += 100;
+      if (newProgress > 100) newProgress -= 100;
+
+      progress.value = newProgress;
+      startAngle.value = currentAngle;
+    };
+
+    const startDrag = (event: MouseEvent | TouchEvent) => {
+      event.preventDefault();
+      isDragging.value = true;
+      startAngle.value = calculateAngle(event);
+      document.addEventListener('mousemove', updateProgress);
+      document.addEventListener('touchmove', updateProgress);
+      document.addEventListener('mouseup', stopDrag);
+      document.addEventListener('touchend', stopDrag);
+    };
+
+    const stopDrag = () => {
+      isDragging.value = false;
+      document.removeEventListener('mousemove', updateProgress);
+      document.removeEventListener('touchmove', updateProgress);
+      document.removeEventListener('mouseup', stopDrag);
+      document.removeEventListener('touchend', stopDrag);
+    };
+
+    onMounted(() => {
+      document.addEventListener('mouseleave', stopDrag);
     });
 
-    const handleMouseMove = (event: MouseEvent) => {
-      const target = event.currentTarget as HTMLElement;
-      const rect = target.getBoundingClientRect();
-      const x = event.clientX - rect.left;
-      const y = event.clientY - rect.top;
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      // 計算滑鼠相對於圓心的角度，轉為進度值
-      const angle = (Math.atan2(y - centerY, x - centerX) * 180) / Math.PI + 180;
-      progress.value = Math.round((angle / 360) * 100);
-    };
-
-    const resetProgress = () => {
-      progress.value = 0;
-    };
+    onUnmounted(() => {
+      document.removeEventListener('mouseleave', stopDrag);
+    });
 
     return {
       progress,
-      progressColor,
+      container,
+      circumference,
       dashOffset,
-      handleMouseMove,
-      resetProgress,
+      handlePosition,
+      startDrag,
     };
   },
 });
